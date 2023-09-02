@@ -1,5 +1,19 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
+
+function sendNotification(message: string) {
+  if (!("Notification" in window)) {
+    alert("This browser does not support desktop notification");
+  } else if (Notification.permission === "granted") {
+    new Notification(message);
+  } else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        new Notification(message);
+      }
+    });
+  }
+}
 
 function App() {
   const [timer, setTimer] = useState(() => {
@@ -14,9 +28,9 @@ function App() {
   const formattedTime = timer.toTimeString().split(" ")[0];
 
   const handleKeyPress = (event: KeyboardEvent) => {
-    console.log("key pressed", event.key);
     switch (event.key) {
       case "r":
+      case "Enter":
         runTimer();
         event.stopPropagation();
         break;
@@ -33,10 +47,21 @@ function App() {
 
   useEffect(() => {
     document.addEventListener("keypress", handleKeyPress);
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
     return () => {
       document.removeEventListener("keypress", handleKeyPress);
     };
   });
+
+  useEffect(() => {
+    if (timer.getSeconds() === 0 && timer.getMinutes() === 0 && !!interval) {
+      clearTimer();
+      setIsFinished(true);
+      sendNotification("Pomidor is finished!");
+    }
+  }, [timer, interval]);
 
   const runTimer = () => {
     if (!interval) {
@@ -59,7 +84,6 @@ function App() {
   };
 
   function stopTimer() {
-    console.log("interval", interval);
     if (interval) {
       clearInterval(interval);
       setIntervalValue(null);
@@ -73,11 +97,6 @@ function App() {
       return newTimerValue;
     });
   };
-
-  if (timer.getSeconds() === 0 && timer.getMinutes() === 0 && !!interval) {
-    setIsFinished(true);
-    clearTimer();
-  }
 
   return (
     <div className="app-container">
@@ -101,13 +120,19 @@ function App() {
       </label>
 
       <div className="control-panel">
-        <button accessKey="r" className="control-button" onClick={runTimer}>
+        <button className="control-button" onClick={runTimer}>
           Run
         </button>
-        <button accessKey="s" className="control-button" onClick={stopTimer}>
+        <button className="control-button" onClick={stopTimer}>
           Stop
         </button>
-        <button accessKey="c" className="control-button" onClick={clearTimer}>
+        <button
+          className="control-button"
+          onClick={() => {
+            clearTimer();
+            setIsFinished(false);
+          }}
+        >
           Clear
         </button>
       </div>
