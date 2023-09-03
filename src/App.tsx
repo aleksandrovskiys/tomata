@@ -1,19 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
-
-function sendNotification(message: string) {
-  if (!("Notification" in window)) {
-    alert("This browser does not support desktop notification");
-  } else if (Notification.permission === "granted") {
-    new Notification(message);
-  } else if (Notification.permission !== "denied") {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        new Notification(message);
-      }
-    });
-  }
-}
+import { WorkerCommand } from "./interafaces";
 
 function App() {
   const [timer, setTimer] = useState(() => {
@@ -26,6 +13,36 @@ function App() {
   const [interval, setIntervalValue] = useState<NodeJS.Timer | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const formattedTime = timer.toTimeString().split(" ")[0];
+
+  const worker = useMemo<Worker>(
+    () => new Worker(new URL("./worker.ts", import.meta.url)),
+    []
+  );
+
+  worker.onmessage = (e: MessageEvent) => {
+    const message: WorkerCommand = e.data;
+    switch (message.command) {
+      case "timerStarted":
+        if (message.intervalId) {
+          setIntervalValue(message.intervalId);
+        } else {
+          console.error("Interval id is not defined");
+        }
+        break;
+      case "timerStopped":
+        setIntervalValue(null);
+        clearTimer();
+        break;
+      case "timerFinished":
+        setIsFinished(true);
+        break;
+      case "tick":
+        updateTimer(message.time!);
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleKeyPress = (event: KeyboardEvent) => {
     switch (event.key) {
@@ -55,25 +72,9 @@ function App() {
     };
   });
 
-  useEffect(() => {
-    if (timer.getSeconds() === 0 && timer.getMinutes() === 0 && !!interval) {
-      clearTimer();
-      setIsFinished(true);
-      sendNotification("Pomidor is finished!");
-    }
-  }, [timer, interval]);
-
   const runTimer = () => {
-    if (!interval) {
-      if (!!timeout) {
-        const newDate = new Date();
-        newDate.setHours(0, timeout, 0);
-        setTimer(newDate);
-      }
-      const intervalNumber = setInterval(updateTimer, 1000);
-      setIsFinished(false);
-      setIntervalValue(intervalNumber);
-    }
+    worker.postMessage({ command: "start", timeout });
+    setIsFinished(false);
   };
 
   const clearTimer = () => {
@@ -85,17 +86,12 @@ function App() {
 
   function stopTimer() {
     if (interval) {
-      clearInterval(interval);
-      setIntervalValue(null);
+      worker.postMessage({ command: "stop", intervalId: interval });
     }
   }
 
-  const updateTimer = () => {
-    setTimer((prevTimer) => {
-      const newTimerValue = new Date(prevTimer);
-      newTimerValue.setSeconds(prevTimer.getSeconds() - 1);
-      return newTimerValue;
-    });
+  const updateTimer = (newDate: Date) => {
+    setTimer(newDate);
   };
 
   return (
