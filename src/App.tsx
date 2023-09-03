@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { WorkerCommand } from "./interafaces";
+import { Button } from "./components/Button";
+import { TimeoutInput } from "./components/TimeoutInput";
 
 function App() {
   const [timer, setTimer] = useState(() => {
@@ -9,7 +11,7 @@ function App() {
     return newDate;
   });
 
-  const [timeout, setTimeout] = useState<number>(15);
+  const [timeout, setTimeout] = useState<number>(25);
   const [interval, setIntervalValue] = useState<NodeJS.Timer | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const formattedTime = timer.toTimeString().split(" ")[0];
@@ -18,6 +20,31 @@ function App() {
     () => new Worker(new URL("./worker.ts", import.meta.url)),
     []
   );
+
+  const runTimer = () => {
+    let date = new Date();
+    date.setHours(0, timeout, 0);
+    setTimer(date);
+    worker.postMessage({ command: "start", timeout });
+    setIsFinished(false);
+  };
+
+  const clearTimer = () => {
+    stopTimer();
+    const newDate = new Date();
+    newDate.setHours(0, 0, 0);
+    setTimer(newDate);
+  };
+
+  function stopTimer() {
+    if (interval) {
+      worker.postMessage({ command: "stop", intervalId: interval });
+    }
+  }
+
+  const updateTimer = (newDate: Date) => {
+    setTimer(newDate);
+  };
 
   worker.onmessage = (e: MessageEvent) => {
     const message: WorkerCommand = e.data;
@@ -72,65 +99,27 @@ function App() {
     };
   });
 
-  const runTimer = () => {
-    worker.postMessage({ command: "start", timeout });
-    setIsFinished(false);
-  };
-
-  const clearTimer = () => {
-    stopTimer();
-    const newDate = new Date();
-    newDate.setHours(0, 0, 0);
-    setTimer(newDate);
-  };
-
-  function stopTimer() {
-    if (interval) {
-      worker.postMessage({ command: "stop", intervalId: interval });
-    }
-  }
-
-  const updateTimer = (newDate: Date) => {
-    setTimer(newDate);
-  };
-
   return (
     <div className="app-container">
       <h1>{formattedTime}</h1>
       <h2>{isFinished ? "Finished!" : null}</h2>
       <label>
         Start pomidor for&nbsp;
-        <input
-          type="number"
-          className="timeout-input"
-          autoFocus
-          value={timeout}
-          data-e2e="timeout-input"
-          onChange={(e) => {
-            if (e.target.value && parseInt(e.target.value) > 0) {
-              setTimeout(parseInt(e.target.value));
-            }
-          }}
-        />
+        <TimeoutInput timeout={timeout} setTimeout={setTimeout} autoFocus />
         &nbsp;minutes
       </label>
 
       <div className="control-panel">
-        <button className="control-button" onClick={runTimer}>
-          Run
-        </button>
-        <button className="control-button" onClick={stopTimer}>
-          Stop
-        </button>
-        <button
+        <Button className="control-button" onClick={runTimer} text="Run" />
+        <Button className="control-button" onClick={stopTimer} text="Stop" />
+        <Button
           className="control-button"
           onClick={() => {
             clearTimer();
             setIsFinished(false);
           }}
-        >
-          Clear
-        </button>
+          text="Clear"
+        />
       </div>
     </div>
   );

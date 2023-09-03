@@ -40,5 +40,5 @@ function startTimer(timeout: number): NodeJS.Timer {
 function stopTimer(id: NodeJS.Timer) {
   clearInterval(id);
 }
-
-export default {};
+const a = 1;
+export default a;
