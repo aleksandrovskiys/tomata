@@ -11,7 +11,7 @@ function App() {
     return newDate;
   });
 
-  const [timeout, setTimeout] = useState<number>(25);
+  const [timeout, setTimeout] = useState<number | null>(25);
   const [interval, setIntervalValue] = useState<NodeJS.Timer | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const formattedTime = timer.toTimeString().split(" ")[0];
@@ -22,6 +22,10 @@ function App() {
   );
 
   const runTimer = () => {
+    if (!timeout || timeout <= 0) {
+      alert("Please set timeout");
+      return;
+    }
     let date = new Date();
     date.setHours(0, timeout, 0);
     setTimer(date);
@@ -34,6 +38,7 @@ function App() {
     const newDate = new Date();
     newDate.setHours(0, 0, 0);
     setTimer(newDate);
+    setIsFinished(false);
   };
 
   function stopTimer() {
@@ -58,7 +63,6 @@ function App() {
         break;
       case "timerStopped":
         setIntervalValue(null);
-        clearTimer();
         break;
       case "timerFinished":
         setIsFinished(true);
@@ -75,8 +79,12 @@ function App() {
     switch (event.key) {
       case "r":
       case "Enter":
-        runTimer();
-        event.stopPropagation();
+        if (interval) {
+          stopTimer();
+        } else {
+          runTimer();
+          event.stopPropagation();
+        }
         break;
       case "s":
         stopTimer();
@@ -110,8 +118,11 @@ function App() {
       </label>
 
       <div className="control-panel">
-        <Button className="control-button" onClick={runTimer} text="Run" />
-        <Button className="control-button" onClick={stopTimer} text="Stop" />
+        {interval === null ? (
+          <Button className="control-button" onClick={runTimer} text="Run" />
+        ) : (
+          <Button className="control-button" onClick={stopTimer} text="Stop" />
+        )}
         <Button
           className="control-button"
           onClick={() => {

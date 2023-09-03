@@ -1,6 +1,6 @@
 interface TimeoutInputProps extends React.HTMLAttributes<HTMLInputElement> {
-  timeout: number;
-  setTimeout: (timeout: number) => void;
+  timeout: number | null;
+  setTimeout: (timeout: number | null) => void;
 }
 
 export function TimeoutInput({
@@ -12,10 +12,12 @@ export function TimeoutInput({
     <input
       type="number"
       className="timeout-input"
-      value={timeout}
+      value={timeout!}
       onChange={(e) => {
         if (e.target.value && parseInt(e.target.value) > 0) {
           setTimeout(parseInt(e.target.value));
+        } else {
+          setTimeout(null);
         }
       }}
       {...args}
