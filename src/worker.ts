@@ -1,7 +1,9 @@
 import { WorkerCommand } from "./interafaces";
 
 function sendNotification(message: string) {
-  new Notification(message);
+  new Notification(message, {
+    icon: "/mini-tomato.svg",
+  });
 }
 
 onmessage = function (e: MessageEvent) {
