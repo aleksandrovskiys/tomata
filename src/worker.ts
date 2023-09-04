@@ -24,7 +24,6 @@ function startTimer(timeout: number): NodeJS.Timer {
   let date = new Date();
   date.setHours(0, timeout, 0);
   const interval = setInterval(() => {
-    console.log(`Worker: tick ${new Date()}`);
     date.setSeconds(date.getSeconds() - 1);
     postMessage({ command: "tick", time: date });
 
