@@ -65,6 +65,7 @@ function App() {
         setIntervalValue(null);
         break;
       case "timerFinished":
+        setIntervalValue(null);
         setIsFinished(true);
         break;
       case "tick":
