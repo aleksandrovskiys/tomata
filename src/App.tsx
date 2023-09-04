@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
-import { WorkerCommand } from "./interafaces";
+import { Pomidor, WorkerCommand } from "./interafaces";
 import { Button } from "./components/Button";
 import { TimeoutInput } from "./components/TimeoutInput";
+import PomidorList from "./components/PomidorList";
 
 function App() {
   const [timer, setTimer] = useState(() => {
@@ -15,6 +16,7 @@ function App() {
   const [interval, setIntervalValue] = useState<NodeJS.Timer | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const formattedTime = timer.toTimeString().split(" ")[0];
+  const [pomidors, setPomidors] = useState<Pomidor[]>([]);
 
   const worker = useMemo<Worker>(
     () => new Worker(new URL("./worker.ts", import.meta.url)),
@@ -67,6 +69,12 @@ function App() {
       case "timerFinished":
         setIntervalValue(null);
         setIsFinished(true);
+        const newPomidors = [...pomidors];
+        newPomidors.push({
+          finished: new Date(),
+          duration: timeout!,
+        });
+        setPomidors(newPomidors);
         break;
       case "tick":
         updateTimer(message.time!);
@@ -133,6 +141,7 @@ function App() {
           text="Clear"
         />
       </div>
+      <PomidorList pomidors={pomidors} />
     </div>
   );
 }

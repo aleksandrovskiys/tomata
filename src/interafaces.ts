@@ -4,3 +4,8 @@ export interface WorkerCommand {
   timeout?: number;
   time?: Date;
 }
+
+export interface Pomidor {
+  duration: number;
+  finished: Date;
+}
