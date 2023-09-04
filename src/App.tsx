@@ -141,7 +141,9 @@ function App() {
           text="Clear"
         />
       </div>
-      <PomidorList pomidors={pomidors} />
+      <PomidorList
+        pomidors={pomidors.sort((a, b) => (a.finished > b.finished ? -1 : 1))}
+      />
     </div>
   );
 }
