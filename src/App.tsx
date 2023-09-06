@@ -128,12 +128,11 @@ function App() {
 
       <div className="control-panel">
         {interval === null ? (
-          <Button className="control-button" onClick={runTimer} text="Run" />
+          <Button onClick={runTimer} text="Run" />
         ) : (
-          <Button className="control-button" onClick={stopTimer} text="Stop" />
+          <Button onClick={stopTimer} text="Stop" />
         )}
         <Button
-          className="control-button"
           onClick={() => {
             clearTimer();
             setIsFinished(false);
