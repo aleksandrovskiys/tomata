@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { Pomidor, WorkerCommand } from "./interafaces";
-import { Button } from "./components/Button";
-import { TimeoutInput } from "./components/TimeoutInput";
-import PomidorList from "./components/PomidorList";
+import { Button } from "./components/common/Button/Button";
+import { TimeoutInput } from "./components/MainPage/TimeoutInput";
+import PomidorList from "./components/MainPage/PomidorList";
+import AppContainer from "./components/common/AppContainer/AppContainer";
 
 function App() {
   const [timer, setTimer] = useState(() => {
@@ -119,7 +120,7 @@ function App() {
   });
 
   return (
-    <div className="app-container">
+    <AppContainer>
       <h1>{formattedTime}</h1>
       <h2>{isFinished ? "Finished!" : null}</h2>
       <label>
@@ -145,7 +146,7 @@ function App() {
       <PomidorList
         pomidors={pomidors.sort((a, b) => (a.finished > b.finished ? -1 : 1))}
       />
-    </div>
+    </AppContainer>
   );
 }
 
