@@ -1,9 +1,11 @@
 import { WorkerCommand } from "./interafaces";
 
 function sendNotification(message: string) {
-  new Notification(message, {
-    icon: "/mini-tomato.svg",
-  });
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification(message, {
+      icon: "/mini-tomato.svg",
+    });
+  }
 }
 
 onmessage = function (e: MessageEvent) {

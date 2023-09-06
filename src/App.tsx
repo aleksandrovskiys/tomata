@@ -108,8 +108,10 @@ function App() {
 
   useEffect(() => {
     document.addEventListener("keypress", handleKeyPress);
-    if (Notification.permission !== "granted") {
-      Notification.requestPermission();
+    if ("Notification" in window) {
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+      }
     }
     return () => {
       document.removeEventListener("keypress", handleKeyPress);
