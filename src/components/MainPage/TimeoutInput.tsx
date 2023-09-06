@@ -1,3 +1,5 @@
+import "./TimeoutInput.css";
+
 interface TimeoutInputProps extends React.HTMLAttributes<HTMLInputElement> {
   timeout: number | null;
   setTimeout: (timeout: number | null) => void;

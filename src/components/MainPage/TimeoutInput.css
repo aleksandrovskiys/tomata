@@ -1,0 +1,13 @@
+.timeout-input {
+  font-size: 25px;
+  max-width: 50px;
+  margin: 15px auto;
+  border: 3px solid #934a5f;
+  border-radius: 5px;
+  text-align: center;
+}
+.timeout-input::-webkit-outer-spin-button,
+.timeout-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

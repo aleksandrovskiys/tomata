@@ -4,41 +4,7 @@
   background-color: #c2b4d6;
 }
 
-.app-container {
-  display: flex;
-  margin: 30vh auto;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 500px;
-  font-size: 24px;
-  border: none;
-}
-
-.timeout-input {
-  font-size: 25px;
-  max-width: 50px;
-  margin: 15px auto;
-  border: 3px solid #934a5f;
-  border-radius: 5px;
-  text-align: center;
-}
-.timeout-input::-webkit-outer-spin-button,
-.timeout-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 .control-panel {
   display: flex;
   flex-direction: row;
-}
-
-.control-button {
-  font-size: 25px;
-  margin: 10px;
-  background-color: #934a5f;
-  color: #e5e5e5;
-  border: none;
-  border-radius: 5px;
 }

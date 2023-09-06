@@ -1,4 +1,4 @@
-import { Pomidor } from "../interafaces";
+import { Pomidor } from "../../interafaces";
 import { PomidorListElement } from "./PomidorListElement";
 
 interface Props {
