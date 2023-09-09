@@ -1,0 +1,19 @@
+.register-text-input {
+  background-color: red;
+  padding: 5px;
+  font-size: 25px;
+  margin: 10px;
+  background-color: #934a5f;
+  color: #e5e5e5;
+  border: none;
+  border-radius: 5px;
+}
+
+.register-form {
+  max-width: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
