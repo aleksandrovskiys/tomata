@@ -4,6 +4,7 @@ import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 import "./RegisterPage.css";
 import FormInputField from "../common/FormComponents/FormTextField/FormTextField";
 import { emailValidationRules } from "../common/FormComponents/rules";
+import { register } from "../../api/api";
 
 interface Inputs extends FieldValues {
   email: string;
@@ -21,8 +22,16 @@ const RegisterPage = () => {
     mode: "onChange",
   });
 
-  const onSubmit: SubmitHandler<Inputs> = (data) =>
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log("On submit", data);
+
+    try {
+      const result = register({ email: data.email, password: data.password });
+      console.log("Result", result)
+    } catch (e) {
+      alert(e);
+    }
+  }
 
   return (
     <AppContainer>
