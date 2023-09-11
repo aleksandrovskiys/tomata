@@ -9,7 +9,7 @@ interface Props<T extends FieldValues>
   extends UseControllerProps<T>,
   Pick<
     React.InputHTMLAttributes<HTMLInputElement>,
-    "placeholder" | "className" | "type"
+    "placeholder" | "className" | "type" | "autoFocus"
   > { }
 
 function FormInputField<T extends FieldValues>(props: Props<T>) {

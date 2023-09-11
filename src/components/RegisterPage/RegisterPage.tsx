@@ -1,6 +1,6 @@
 import AppContainer from "../common/AppContainer/AppContainer";
 import Button from "../common/Button/Button";
-import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
+import { useForm, FieldValues } from "react-hook-form";
 import "./RegisterPage.css";
 import FormInputField from "../common/FormComponents/FormTextField/FormTextField";
 import { emailValidationRules } from "../common/FormComponents/rules";
@@ -13,7 +13,7 @@ interface Inputs extends FieldValues {
 }
 
 const RegisterPage = () => {
-  const { handleSubmit, control, formState } = useForm<Inputs>({
+  const { handleSubmit, control } = useForm<Inputs>({
     defaultValues: {
       email: "",
       password: "",
@@ -22,12 +22,10 @@ const RegisterPage = () => {
     mode: "onChange",
   });
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  async function onSubmit(data: Inputs) {
     console.log("On submit", data);
-
     try {
-      const result = register({ email: data.email, password: data.password });
-      console.log("Result", result)
+      await register({ email: data.email, password: data.password }).then(() => alert("Registration successful!")).catch(err => console.log(err));
     } catch (e) {
       alert(e);
     }
@@ -36,8 +34,9 @@ const RegisterPage = () => {
   return (
     <AppContainer>
       <h2>Register</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="register-form">
+      <form onSubmit={handleSubmit((data) => onSubmit(data))} className="register-form" noValidate>
         <FormInputField
+          autoFocus
           name="email"
           className="register-text-input"
           type="email"
@@ -62,11 +61,7 @@ const RegisterPage = () => {
           rules={{ required: "Password confirmation is a required field", minLength: { value: 8, message: "Password should be minimum 8 symbols long" } }}
         />
 
-        <Button onClick={() => {
-          if (!formState.isValid) { alert("Form still contains errors"); console.log(formState.errors) }
-          else { alert("All good!") }
-        }
-        } text="Register" />
+        <Button onClick={handleSubmit(onSubmit)} text="Register" />
       </form>
     </AppContainer>
   );
