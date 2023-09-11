@@ -2,12 +2,11 @@ import "./Button.css";
 
 interface Props extends React.HTMLAttributes<HTMLButtonElement> {
   text: string;
-  onClick: () => void;
 }
 
-export function Button({ text, onClick }: Props) {
+export function Button({ text, onClick, ...args }: Props) {
   return (
-    <button className="control-button" onClick={onClick}>
+    <button className="control-button" onClick={onClick} {...args}>
       {text}
     </button>
   );

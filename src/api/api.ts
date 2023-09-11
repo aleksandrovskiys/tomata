@@ -6,7 +6,7 @@ interface RegisterParameters {
 }
 
 
-export async function register(parameters: RegisterParameters) {
+export async function register(parameters: RegisterParameters): Promise<any> {
   console.log("Calling api: ", API_URL);
   const response = await fetch(
     `${API_URL}/register`,
@@ -14,7 +14,11 @@ export async function register(parameters: RegisterParameters) {
       method: "POST",
       body: JSON.stringify(parameters)
     }
-  )
+  ).catch(err => console.log(err))
+
+  if (!response) {
+    return Promise.reject("Can't connect to server")
+  }
 
   const { data, errors } = await response.json();
 
