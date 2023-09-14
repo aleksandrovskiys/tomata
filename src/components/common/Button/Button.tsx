@@ -2,6 +2,7 @@ import "./Button.css";
 
 interface Props extends React.HTMLAttributes<HTMLButtonElement> {
   text: string;
+  type?: "button" | "submit" | "reset" | undefined;
 }
 
 export function Button({ text, onClick, ...args }: Props) {
