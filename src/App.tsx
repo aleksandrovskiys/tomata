@@ -21,7 +21,7 @@ function App() {
 
   const worker = useMemo<Worker>(
     () => new Worker(new URL("./worker.ts", import.meta.url)),
-    []
+    [],
   );
 
   const runTimer = () => {
