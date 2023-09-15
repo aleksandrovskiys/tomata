@@ -7,10 +7,10 @@ import "./FormTextField.css";
 
 interface Props<T extends FieldValues>
   extends UseControllerProps<T>,
-  Pick<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "placeholder" | "className" | "type" | "autoFocus"
-  > { }
+    Pick<
+      React.InputHTMLAttributes<HTMLInputElement>,
+      "placeholder" | "className" | "type" | "autoFocus" | "style"
+    > {}
 
 function FormInputField<T extends FieldValues>(props: Props<T>) {
   const { name, control, rules, className, type } = props;
