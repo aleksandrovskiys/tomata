@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import Button from "../common/Button/Button";
+import Form from "../common/Form/Form";
 import FormInputField from "../common/FormComponents/FormTextField/FormTextField";
 import { emailValidationRules } from "../common/FormComponents/rules";
 import { RegisterInputs } from "./RegisterPage";
@@ -20,15 +21,10 @@ const RegistrationForm = ({ onSubmit }: Props) => {
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit((data) => onSubmit(data))}
-        className="register-form"
-        noValidate
-      >
+      <Form onSubmit={handleSubmit((data) => onSubmit(data))} noValidate>
         <FormInputField
           autoFocus
           name="email"
-          className="register-text-input"
           type="email"
           control={control}
           rules={emailValidationRules}
@@ -36,7 +32,6 @@ const RegistrationForm = ({ onSubmit }: Props) => {
         />
         <FormInputField
           name="password"
-          className="register-text-input"
           placeholder="password"
           control={control}
           type="password"
@@ -50,7 +45,6 @@ const RegistrationForm = ({ onSubmit }: Props) => {
         />
         <FormInputField
           name="passwordConfirmation"
-          className="register-text-input"
           placeholder="confirm"
           control={control}
           type="password"
@@ -66,7 +60,7 @@ const RegistrationForm = ({ onSubmit }: Props) => {
           }}
         />
         <Button onClick={handleSubmit(onSubmit)} text="Register" />
-      </form>
+      </Form>
     </>
   );
 };

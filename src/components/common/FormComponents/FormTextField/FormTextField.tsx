@@ -24,7 +24,7 @@ function FormInputField<T extends FieldValues>(props: Props<T>) {
       <input
         {...props}
         type={type}
-        className={className}
+        className={className + " form-input"}
         onChange={field.onChange}
         onBlur={field.onBlur}
         value={field.value}
