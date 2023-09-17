@@ -5,3 +5,13 @@
   word-break: break-all;
 }
 
+.form-input {
+  background-color: red;
+  padding: 5px;
+  font-size: 25px;
+  margin: 10px;
+  background-color: #934a5f;
+  color: #e5e5e5;
+  border: none;
+  border-radius: 5px;
+}
