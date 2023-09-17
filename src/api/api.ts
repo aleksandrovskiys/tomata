@@ -23,11 +23,12 @@ interface LoginResponse extends BasicResponse {
   data: {
     email: string;
     id: number;
+    token: string;
   };
 }
 
 export async function register(
-  parameters: RegisterParameters,
+  parameters: RegisterParameters
 ): Promise<RegisterResponse> {
   const response = await fetch(`${API_URL}/register`, {
     method: "POST",
@@ -50,7 +51,7 @@ export async function register(
 }
 
 export async function login(parameters: LoginInputs): Promise<LoginResponse> {
-  const response = await fetch(`${API_URL}/register`, {
+  const response = await fetch(`${API_URL}/login`, {
     method: "POST",
     body: JSON.stringify(parameters),
   })

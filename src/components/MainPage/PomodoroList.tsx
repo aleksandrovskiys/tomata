@@ -8,8 +8,8 @@ export const PomodoroList = ({ pomodoros }: Props) => {
   return (
     <div>
       <ul>
-        {pomodoros.map((pomidor, idx) => (
-          <PomodoroListElement pomodoro={pomidor} key={idx} />
+        {pomodoros.map((pomodoro, idx) => (
+          <PomodoroListElement pomodoro={pomodoro} key={idx} />
         ))}
       </ul>
     </div>

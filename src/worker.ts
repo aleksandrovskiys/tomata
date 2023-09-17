@@ -32,7 +32,7 @@ function startTimer(timeout: number): NodeJS.Timer {
     postMessage({ command: "tick", time: date });
 
     if (date.getSeconds() === 0 && date.getMinutes() === 0 && !!interval) {
-      sendNotification("Pomidor is finished!");
+      sendNotification("Pomodoro is finished!");
       postMessage({ command: "timerFinished" });
       stopTimer(interval);
     }

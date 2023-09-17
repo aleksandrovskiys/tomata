@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import "./TimerPage.css";
-import { Pomidor, WorkerCommand } from "../../interafaces";
+import { Pomodoro, WorkerCommand } from "../../interafaces";
 import { Button } from "../common/Button/Button";
 import { TimeoutInput } from "../MainPage/TimeoutInput";
-import PomidorList from "../MainPage/PomidorList";
+import PomodoroList from "../MainPage/PomodoroList";
 import AppContainer from "../common/AppContainer/AppContainer";
 
 function App() {
@@ -17,11 +17,11 @@ function App() {
   const [interval, setIntervalValue] = useState<NodeJS.Timer | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const formattedTime = timer.toTimeString().split(" ")[0];
-  const [pomidors, setPomidors] = useState<Pomidor[]>([]);
+  const [pomodoros, setPomodoros] = useState<Pomodoro[]>([]);
 
   const worker = useMemo<Worker>(
     () => new Worker(new URL("../../worker.ts", import.meta.url)),
-    []
+    [],
   );
 
   const runTimer = () => {
@@ -70,12 +70,12 @@ function App() {
       case "timerFinished":
         setIntervalValue(null);
         setIsFinished(true);
-        const newPomidors = [...pomidors];
-        newPomidors.push({
+        const newPomodoros = [...pomodoros];
+        newPomodoros.push({
           finished: new Date(),
           duration: timeout!,
         });
-        setPomidors(newPomidors);
+        setPomodoros(newPomodoros);
         break;
       case "tick":
         updateTimer(message.time!);
@@ -124,7 +124,7 @@ function App() {
       <h1>{formattedTime}</h1>
       <h2>{isFinished ? "Finished!" : null}</h2>
       <label>
-        Start pomidor for&nbsp;
+        Start pomodoro for&nbsp;
         <TimeoutInput timeout={timeout} setTimeout={setTimeout} autoFocus />
         &nbsp;minutes
       </label>
@@ -143,8 +143,8 @@ function App() {
           text="Clear"
         />
       </div>
-      <PomidorList
-        pomidors={pomidors.sort((a, b) => (a.finished > b.finished ? -1 : 1))}
+      <PomodoroList
+        pomodoros={pomodoros.sort((a, b) => (a.finished > b.finished ? -1 : 1))}
       />
     </AppContainer>
   );
