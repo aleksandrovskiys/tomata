@@ -1,3 +1,5 @@
+import { LoginInputs } from "../components/LoginPage/LoginForm";
+
 const API_URL = process.env.REACT_APP_API_URL;
 
 interface RegisterParameters {
@@ -5,18 +7,28 @@ interface RegisterParameters {
   password: string;
 }
 
-interface RegisterResponse {
+interface BasicResponse {
+  data: any;
+  errors?: string[];
+}
+
+interface RegisterResponse extends BasicResponse {
   data: {
     id: string;
     email: string;
   };
-  errors?: string[];
+}
+
+interface LoginResponse extends BasicResponse {
+  data: {
+    email: string;
+    id: number;
+  };
 }
 
 export async function register(
   parameters: RegisterParameters,
 ): Promise<RegisterResponse> {
-  console.log("Calling api: ", API_URL);
   const response = await fetch(`${API_URL}/register`, {
     method: "POST",
     body: JSON.stringify(parameters),
@@ -35,4 +47,21 @@ export async function register(
     const error = new Error(errors.join("\n"));
     return Promise.reject(error);
   }
+}
+
+export async function login(parameters: LoginInputs): Promise<LoginResponse> {
+  const response = await fetch(`${API_URL}/register`, {
+    method: "POST",
+    body: JSON.stringify(parameters),
+  })
+    .then((res) => res.json())
+    .then((data: LoginResponse) => {
+      return Promise.resolve(data);
+    })
+    .catch((err) => {
+      console.log(err);
+      return Promise.reject(err);
+    });
+
+  return response;
 }

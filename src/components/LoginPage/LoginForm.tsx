@@ -9,7 +9,11 @@ export interface LoginInputs extends FieldValues {
   password: string;
 }
 
-export function LoginForm() {
+interface Props {
+  onSubmit: (data: LoginInputs) => void;
+}
+
+export function LoginForm({ onSubmit }: Props) {
   const { handleSubmit, control } = useForm<LoginInputs>({
     defaultValues: {
       email: "",
@@ -17,10 +21,6 @@ export function LoginForm() {
     },
     mode: "onChange",
   });
-
-  const onSubmit = (data: LoginInputs) => {
-    console.log(data);
-  };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
