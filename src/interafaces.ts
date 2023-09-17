@@ -5,7 +5,7 @@ export interface WorkerCommand {
   time?: Date;
 }
 
-export interface Pomidor {
+export interface Pomodoro {
   duration: number;
   finished: Date;
 }

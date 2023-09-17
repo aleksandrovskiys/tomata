@@ -11,7 +11,6 @@ export function LoginPage() {
     login(data)
       .then((res) => {
         setIsLoggedIn(true);
-        console.log("Logged in!", res);
       })
       .catch((err) => {
         setError(err.message);
