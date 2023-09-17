@@ -30,7 +30,7 @@ export async function register(
   const { data, errors } = await response.json();
 
   if (response.ok) {
-    return data;
+    return Promise.resolve(data);
   } else {
     const error = new Error(errors.join("\n"));
     return Promise.reject(error);
