@@ -2,11 +2,10 @@ import { Pomodoro } from "../../interafaces";
 
 interface Props {
   pomodoro: Pomodoro;
-  key: number;
 }
-export function PomodoroListElement({ pomodoro, key }: Props) {
+export function PomodoroListElement({ pomodoro }: Props) {
   return (
-    <li key={key}>
+    <li>
       {pomodoro.finished.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
