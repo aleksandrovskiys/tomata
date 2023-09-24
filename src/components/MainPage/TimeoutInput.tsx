@@ -19,7 +19,7 @@ export function TimeoutInput({
         if (e.target.value && parseInt(e.target.value) > 0) {
           setTimeout(parseInt(e.target.value));
         } else {
-          setTimeout(null);
+          setTimeout(0);
         }
       }}
       {...args}
