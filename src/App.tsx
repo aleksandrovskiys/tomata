@@ -7,12 +7,17 @@ import "./App.css";
 import NavbarLink from "./components/common/NavigationBar/NavbarLink/NavbarLink";
 
 export function App() {
+  const integrationActivated = process.env.REACT_APP_INTEGRATION_ACTIVATED;
   return (
     <>
       <TopBar>
         <NavbarLink to="/">Timer</NavbarLink>
-        <NavbarLink to="/login">Login</NavbarLink>
-        <NavbarLink to="/register">Register</NavbarLink>
+        {integrationActivated === "true" ? (
+          <>
+            <NavbarLink to="/login">Login</NavbarLink>
+            <NavbarLink to="/register">Register</NavbarLink>
+          </>
+        ) : null}
       </TopBar>
       <Routes>
         <Route

@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import "./TimerPage.css";
-import { Pomodoro, WorkerCommand } from "../../interafaces";
+import { WorkerCommand } from "../../interafaces";
 import { Button } from "../common/Button/Button";
 import { TimeoutInput } from "../MainPage/TimeoutInput";
 import PomodoroList from "../MainPage/PomodoroList";
 import AppContainer from "../common/AppContainer/AppContainer";
+import usePomodoros from "../../hooks/usePomodoros";
+import { pluralize } from "../../utils";
 
 function App() {
   const [timer, setTimer] = useState(() => {
@@ -17,7 +19,11 @@ function App() {
   const [interval, setIntervalValue] = useState<NodeJS.Timer | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const formattedTime = timer.toTimeString().split(" ")[0];
-  const [pomodoros, setPomodoros] = useState<Pomodoro[]>([]);
+  const {
+    pomodoros,
+    setPomodoros,
+    isLoading: pomodorosIsLoading,
+  } = usePomodoros();
 
   const worker = useMemo<Worker>(
     () => new Worker(new URL("../../worker.ts", import.meta.url)),
@@ -42,6 +48,7 @@ function App() {
     newDate.setHours(0, 0, 0);
     setTimer(newDate);
     setIsFinished(false);
+    setPomodoros([]);
   };
 
   function stopTimer() {
@@ -119,14 +126,18 @@ function App() {
     };
   });
 
+  if (pomodorosIsLoading) {
+    return <h1>Loading...</h1>;
+  }
+
   return (
     <AppContainer>
       <h1>{formattedTime}</h1>
       <h2>{isFinished ? "Finished!" : null}</h2>
-      <label>
+      <label className="timer-timeout-label">
         Start pomodoro for&nbsp;
         <TimeoutInput timeout={timeout} setTimeout={setTimeout} autoFocus />
-        &nbsp;minutes
+        &nbsp;{pluralize(timeout || 0, "minute")}
       </label>
 
       <div className="control-panel">
