@@ -8,12 +8,14 @@ export function LoginPage() {
   const [error, setError] = React.useState<string | null>(null);
 
   async function onSubmit(data: LoginInputs) {
+    setError(null);
+    setIsLoggedIn(false);
     login(data)
       .then((res) => {
         setIsLoggedIn(true);
       })
       .catch((err) => {
-        setError(err.message);
+        setError(err);
         setIsLoggedIn(false);
       });
   }
