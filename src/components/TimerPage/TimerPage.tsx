@@ -7,6 +7,7 @@ import PomodoroList from "../MainPage/PomodoroList";
 import AppContainer from "../common/AppContainer/AppContainer";
 import usePomodoros from "../../hooks/usePomodoros";
 import { pluralize } from "../../utils";
+import Loader from "../common/Loader/Loader";
 
 function App() {
   const [timer, setTimer] = useState(() => {
@@ -127,7 +128,7 @@ function App() {
   });
 
   if (pomodorosIsLoading) {
-    return <h1>Loading...</h1>;
+    return <Loader />;
   }
 
   return (

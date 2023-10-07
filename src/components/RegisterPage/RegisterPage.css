@@ -5,14 +5,18 @@
   padding: 0;
 }
 
-.error-block {
+.buttons-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.registration-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.buttons-container {
-  display: flex;
-  flex-direction: row;
+.successful-registration-header {
+  text-align: center;
 }

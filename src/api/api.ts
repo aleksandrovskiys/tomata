@@ -1,4 +1,5 @@
 import { LoginInputs } from "../components/LoginPage/LoginForm";
+import { User } from "../interafaces";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -8,28 +9,21 @@ interface RegisterParameters {
 }
 
 interface BasicResponse {
-  data: any;
-  errors?: string[];
+  message?: string;
 }
 
-interface RegisterResponse extends BasicResponse {
-  data: {
-    id: string;
-    email: string;
-  };
+interface UserInfo extends BasicResponse {
+  user: User;
 }
 
 interface LoginResponse extends BasicResponse {
-  data: {
-    email: string;
-    id: number;
-    token: string;
-  };
+  token: string;
 }
 
 export async function register(
-  parameters: RegisterParameters
-): Promise<RegisterResponse> {
+  parameters: RegisterParameters,
+): Promise<UserInfo> {
+  console.log("calling register", `${API_URL}/register`);
   const response = await fetch(`${API_URL}/register`, {
     method: "POST",
     body: JSON.stringify(parameters),
@@ -40,29 +34,52 @@ export async function register(
     return Promise.reject(error);
   }
 
-  const { data, errors } = await response.json();
+  const { user, message } = await response.json();
 
   if (response.ok) {
-    return Promise.resolve(data);
+    return Promise.resolve(user);
   } else {
-    const error = new Error(errors.join("\n"));
+    const error = new Error(message);
     return Promise.reject(error);
   }
 }
 
 export async function login(parameters: LoginInputs): Promise<LoginResponse> {
-  const response = await fetch(`${API_URL}/login`, {
+  console.log("calling login", `${API_URL}/login`);
+  const response = fetch(`${API_URL}/login`, {
     method: "POST",
     body: JSON.stringify(parameters),
   })
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.status !== 200) {
+        return Promise.reject("Invalid credentials");
+      }
+      return res.json();
+    })
     .then((data: LoginResponse) => {
       return Promise.resolve(data);
     })
-    .catch((err) => {
-      console.log(err);
-      return Promise.reject(err);
+    .catch(() => {
+      return Promise.reject("Service unavailable");
     });
 
+  return response;
+}
+
+export async function getUserInfo(token: string): Promise<User> {
+  console.log("calling getUserInfo", `${API_URL}/users/me`);
+  const response = fetch(`${API_URL}/users/me`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((res) => {
+      if (res.status !== 200) {
+        return Promise.reject("Invalid credentials");
+      }
+      return res.json();
+    })
+    .then((data: UserInfo) => {
+      return Promise.resolve(data.user);
+    });
   return response;
 }

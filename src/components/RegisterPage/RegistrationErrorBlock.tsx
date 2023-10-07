@@ -10,7 +10,7 @@ interface Props {
 const RegistrationErrorBlock = ({ error, onResetError }: Props) => {
   const navigate = useNavigate();
   return (
-    <div className="error-block">
+    <div className="registration-container">
       <p className="error">{error}</p>
       <div className="buttons-container">
         <Button
