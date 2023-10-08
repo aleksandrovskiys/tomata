@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getUserInfo } from "../api/api";
 import { User } from "../interafaces";
 import { useToken } from "./useToken";
@@ -8,7 +8,7 @@ export const useUser = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useMemo(() => {
+  useEffect(() => {
     if (!!token) {
       setLoading(true);
 
@@ -18,14 +18,14 @@ export const useUser = () => {
           setLoading(false);
         })
         .catch((err) => {
-          console.log("Error on getUserInfo", err);
           setLoading(false);
           setUser(null);
+          saveToken(null);
         });
     } else {
       setUser(null);
     }
-  }, [token]);
+  }, [token, saveToken]);
 
   return { user, loading, token, saveToken };
 };

@@ -6,8 +6,13 @@
   border-radius: 5px;
   text-align: center;
 }
+
 .timeout-input::-webkit-outer-spin-button,
 .timeout-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.timer-timeout-label {
+  text-align: center;
 }
