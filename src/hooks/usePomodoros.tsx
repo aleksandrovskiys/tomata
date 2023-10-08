@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Pomodoro } from "../interafaces";
+import { useAuth } from "./useAuth";
+import useServerPomodoros from "./useServerPomodoros";
 
 interface StoragePomodoro {
   finished: string;
@@ -7,10 +9,19 @@ interface StoragePomodoro {
 }
 
 export function usePomodoros() {
+  const {
+    pomodoros: serverPomodoros,
+    loading,
+    addPomodoro: addPomodoroToServer,
+  } = useServerPomodoros();
+  const { user } = useAuth();
+
   const localPomodoros = localStorage.getItem("pomodoros");
 
-  const [pomodoros, setPomo] = useState<Pomodoro[]>(() => {
-    if (localPomodoros) {
+  const [pomodoros, setPomo] = useState<Pomodoro[]>([]);
+
+  useEffect(() => {
+    if (!user && localPomodoros && !loading) {
       const pomos = JSON.parse(localPomodoros)
         .map((pomodoro: StoragePomodoro) => {
           return {
@@ -23,25 +34,36 @@ export function usePomodoros() {
             new Date(pomodoro.finished).setHours(0, 0, 0, 0) ===
             new Date().setHours(0, 0, 0, 0),
         );
-      return pomos;
+      setPomo(pomos);
+    } else if (user && !loading) {
+      setPomo(serverPomodoros);
     }
-    return [];
-  });
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
+  }, [user, loading, serverPomodoros, localPomodoros]);
 
   const setPomodoros = (newPomodoros: Pomodoro[]) => {
     setPomo(newPomodoros);
     localStorage.setItem("pomodoros", JSON.stringify(newPomodoros));
   };
 
+  const clearPomodoros = () => {
+    setPomo([]);
+    localStorage.setItem("pomodoros", JSON.stringify([]));
+  };
+
+  const addPomodoro = (pomodoro: Pomodoro) => {
+    if (user) {
+      addPomodoroToServer(pomodoro);
+    } else {
+      const newPomodoros = [...pomodoros, pomodoro];
+      setPomodoros(newPomodoros);
+    }
+  };
+
   return {
-    isLoading,
+    isLoading: false,
     pomodoros,
-    setPomodoros,
+    clearPomodoros,
+    addPomodoro,
   };
 }
 

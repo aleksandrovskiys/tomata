@@ -8,6 +8,8 @@ export interface WorkerCommand {
 export interface Pomodoro {
   duration: number;
   finished: Date;
+  id?: number;
+  task?: string;
 }
 
 export interface User {

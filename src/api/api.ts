@@ -1,5 +1,5 @@
 import { LoginInputs } from "../components/LoginPage/LoginForm";
-import { User } from "../interafaces";
+import { Pomodoro, User } from "../interafaces";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -23,7 +23,6 @@ interface LoginResponse extends BasicResponse {
 export async function register(
   parameters: RegisterParameters,
 ): Promise<UserInfo> {
-  console.log("calling register", `${API_URL}/register`);
   const response = await fetch(`${API_URL}/register`, {
     method: "POST",
     body: JSON.stringify(parameters),
@@ -45,14 +44,13 @@ export async function register(
 }
 
 export async function login(parameters: LoginInputs): Promise<LoginResponse> {
-  console.log("calling login", `${API_URL}/login`);
   const response = fetch(`${API_URL}/login`, {
     method: "POST",
     body: JSON.stringify(parameters),
   })
     .then((res) => {
-      if (res.status !== 200) {
-        return Promise.reject("Invalid credentials");
+      if (!res.ok) {
+        return Promise.reject("Unsuccessful request");
       }
       return res.json();
     })
@@ -67,19 +65,68 @@ export async function login(parameters: LoginInputs): Promise<LoginResponse> {
 }
 
 export async function getUserInfo(token: string): Promise<User> {
-  console.log("calling getUserInfo", `${API_URL}/users/me`);
   const response = fetch(`${API_URL}/users/me`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
   })
     .then((res) => {
-      if (res.status !== 200) {
-        return Promise.reject("Invalid credentials");
+      if (!res.ok) {
+        return Promise.reject("Unsuccessful request");
       }
       return res.json();
     })
     .then((data: UserInfo) => {
       return Promise.resolve(data.user);
+    });
+  return response;
+}
+
+export async function getPomodoros(token: string): Promise<Pomodoro[]> {
+  const response = fetch(`${API_URL}/users/pomodoros`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject("Unsuccessful request");
+      }
+      return res.json();
+    })
+    .then((data: Pomodoro[]) => {
+      return Promise.resolve(
+        data.map((pomodoro) => ({
+          ...pomodoro,
+          finished: new Date(pomodoro.finished),
+        })),
+      );
+    });
+  return response;
+}
+
+export async function addPomodoroToServer(
+  token: string,
+  pomodoro: Pomodoro,
+): Promise<Pomodoro> {
+  const response = fetch(`${API_URL}/users/pomodoros`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(pomodoro),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject("Unsuccessful request");
+      }
+      return res.json();
+    })
+    .then((data: Pomodoro) => {
+      return Promise.resolve({ ...data, finished: new Date(data.finished) });
+    })
+    .catch((err) => {
+      console.log(err);
+      return Promise.reject("Service unavailable");
     });
   return response;
 }

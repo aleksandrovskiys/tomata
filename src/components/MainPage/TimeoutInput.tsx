@@ -1,3 +1,4 @@
+import { pluralize } from "../../utils";
 import "./TimeoutInput.css";
 
 interface TimeoutInputProps extends React.HTMLAttributes<HTMLInputElement> {
@@ -11,18 +12,22 @@ export function TimeoutInput({
   ...args
 }: TimeoutInputProps): JSX.Element {
   return (
-    <input
-      type="number"
-      className="timeout-input"
-      value={timeout!}
-      onChange={(e) => {
-        if (e.target.value && parseInt(e.target.value) > 0) {
-          setTimeout(parseInt(e.target.value));
-        } else {
-          setTimeout(0);
-        }
-      }}
-      {...args}
-    />
+    <label className="timer-timeout-label">
+      Start pomodoro for&nbsp;
+      <input
+        type="number"
+        className="timeout-input"
+        value={timeout!}
+        onChange={(e) => {
+          if (e.target.value && parseInt(e.target.value) > 0) {
+            setTimeout(parseInt(e.target.value));
+          } else {
+            setTimeout(0);
+          }
+        }}
+        {...args}
+      />
+      &nbsp;{pluralize(timeout || 0, "minute")}
+    </label>
   );
 }
