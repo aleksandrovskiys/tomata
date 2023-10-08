@@ -1,9 +1,9 @@
 import "./TimerPage.css";
-import PomodoroList from "../MainPage/PomodoroList";
 import AppContainer from "../common/AppContainer/AppContainer";
 import usePomodoros from "../../hooks/usePomodoros";
 import Loader from "../common/Loader/Loader";
 import Timer from "./Timer";
+import PomodoroList from "./PomodoroList";
 
 function TimerPage() {
   const {

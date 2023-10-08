@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./TimerPage.css";
 import { Pomodoro, WorkerCommand } from "../../interafaces";
-import { Button } from "../common/Button/Button";
-import { TimeoutInput } from "../MainPage/TimeoutInput";
+import { TimeoutInput } from "./TimeoutInput";
+import Button from "../common/Button/Button";
+import TaskInput from "./TaskInput";
 
 interface Props {
   addPomodoro: (pomodoro: Pomodoro) => void;
@@ -18,6 +19,8 @@ const Timer = ({ addPomodoro }: Props) => {
   const [timeout, setTimeout] = useState<number | null>(25);
   const [interval, setIntervalValue] = useState<NodeJS.Timer | null>(null);
   const [isFinished, setIsFinished] = useState(false);
+  const [task, setTask] = useState<string>("");
+  const taskInputRef = useRef<HTMLInputElement>(null);
   const formattedTime = timer.toTimeString().split(" ")[0];
 
   const worker = useMemo<Worker>(
@@ -43,6 +46,7 @@ const Timer = ({ addPomodoro }: Props) => {
     newDate.setHours(0, 0, 0);
     setTimer(newDate);
     setIsFinished(false);
+    setTask("");
   };
 
   function stopTimer() {
@@ -74,6 +78,7 @@ const Timer = ({ addPomodoro }: Props) => {
         const newPomodoro = {
           finished: new Date(),
           duration: timeout!,
+          task,
         };
         addPomodoro(newPomodoro);
         break;
@@ -86,6 +91,12 @@ const Timer = ({ addPomodoro }: Props) => {
   };
 
   const handleKeyPress = (event: KeyboardEvent) => {
+    if (
+      taskInputRef.current === document.activeElement &&
+      event.key !== "Enter"
+    ) {
+      return;
+    }
     switch (event.key) {
       case "r":
       case "Enter":
@@ -125,6 +136,14 @@ const Timer = ({ addPomodoro }: Props) => {
       <h2>{isFinished ? "Finished!" : null}</h2>
 
       <TimeoutInput timeout={timeout} setTimeout={setTimeout} autoFocus />
+      <TaskInput
+        ref={taskInputRef}
+        task={task}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setTask(e.target.value)
+        }
+        disabled={interval !== null}
+      />
 
       <div className="control-panel">
         {interval === null ? (

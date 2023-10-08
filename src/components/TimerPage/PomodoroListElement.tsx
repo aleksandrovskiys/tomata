@@ -13,7 +13,7 @@ export function PomodoroListElement({ pomodoro }: Props) {
         hourCycle: "h23",
       })}{" "}
       {pomodoro.duration} minute
-      {String(pomodoro.duration).endsWith("1") ? "" : "s"}
+      {pomodoro.task ? " work on " + pomodoro.task : ""}{" "}
     </li>
   );
 }

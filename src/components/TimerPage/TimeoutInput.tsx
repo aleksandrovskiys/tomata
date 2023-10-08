@@ -1,7 +1,7 @@
 import { pluralize } from "../../utils";
-import "./TimeoutInput.css";
+import "./TimerPageInput.css";
 
-interface TimeoutInputProps extends React.HTMLAttributes<HTMLInputElement> {
+interface TimeoutInputProps extends React.ComponentProps<"input"> {
   timeout: number | null;
   setTimeout: (timeout: number | null) => void;
 }
@@ -16,7 +16,7 @@ export function TimeoutInput({
       Start pomodoro for&nbsp;
       <input
         type="number"
-        className="timeout-input"
+        className="timeout-input timer-page-input"
         value={timeout!}
         onChange={(e) => {
           if (e.target.value && parseInt(e.target.value) > 0) {

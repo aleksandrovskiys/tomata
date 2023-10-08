@@ -1,10 +1,18 @@
-.timeout-input {
+.timer-page-input {
   font-size: 25px;
   max-width: 50px;
   margin: 15px auto;
   border: 3px solid #934a5f;
   border-radius: 5px;
+}
+
+.timeout-input {
   text-align: center;
+}
+
+.task-input {
+  width: 100%;
+  max-width: 300px;
 }
 
 .timeout-input::-webkit-outer-spin-button,
