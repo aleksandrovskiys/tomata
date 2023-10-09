@@ -7,9 +7,10 @@ import TaskInput from "./TaskInput";
 
 interface Props {
   addPomodoro: (pomodoro: Pomodoro) => void;
+  tasks: string[];
 }
 
-const Timer = ({ addPomodoro }: Props) => {
+const Timer = ({ addPomodoro, tasks }: Props) => {
   const [timer, setTimer] = useState(() => {
     const newDate = new Date();
     newDate.setHours(0, 0, 0);
@@ -142,6 +143,7 @@ const Timer = ({ addPomodoro }: Props) => {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setTask(e.target.value)
         }
+        tasks={tasks}
         disabled={interval !== null}
       />
 

@@ -18,7 +18,10 @@ function TimerPage() {
 
   return (
     <AppContainer>
-      <Timer addPomodoro={addPomodoro} />
+      <Timer
+        addPomodoro={addPomodoro}
+        tasks={pomodoros.map((el) => el.task || "")}
+      />
       <PomodoroList
         pomodoros={pomodoros.sort((a, b) => (a.finished > b.finished ? -1 : 1))}
       />
