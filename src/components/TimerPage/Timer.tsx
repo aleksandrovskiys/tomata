@@ -98,6 +98,7 @@ const Timer = ({ addPomodoro, tasks }: Props) => {
     ) {
       return;
     }
+
     switch (event.key) {
       case "r":
       case "Enter":

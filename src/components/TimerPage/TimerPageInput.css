@@ -20,6 +20,7 @@
   margin: 10px auto;
   text-align: start;
   padding: 1px;
+  min-height: 30px;
 }
 
 .task-input br {
@@ -29,6 +30,10 @@
 .task-input * {
   display: inline;
   white-space: nowrap;
+}
+
+.task-input *:focus {
+  outline: none;
 }
 
 .task-input-text {
@@ -45,4 +50,13 @@
 
 .timer-timeout-label {
   text-align: center;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently */
 }
