@@ -17,7 +17,7 @@ export const useUser = () => {
           setUser(user);
           setLoading(false);
         })
-        .catch((err) => {
+        .catch(() => {
           setLoading(false);
           setUser(null);
           saveToken(null);
