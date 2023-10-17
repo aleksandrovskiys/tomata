@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./TimerPage.css";
 import { Pomodoro, WorkerCommand } from "../../interafaces";
 import { TimeoutInput } from "./TimeoutInput";
@@ -9,6 +9,16 @@ interface Props {
   addPomodoro: (pomodoro: Pomodoro) => void;
   tasks: string[];
 }
+const setCursorAtTheEnd = (element: HTMLDivElement) => {
+  const range = document.createRange();
+  const sel = window.getSelection();
+  if (sel) {
+    range.setStart(element, 1);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+};
 
 const Timer = ({ addPomodoro, tasks }: Props) => {
   const [timer, setTimer] = useState(() => {
@@ -17,12 +27,45 @@ const Timer = ({ addPomodoro, tasks }: Props) => {
     return newDate;
   });
 
-  const [timeout, setTimeout] = useState<number | null>(25);
+  const [timeout, setTimeoutValue] = useState<number | null>(25);
   const [interval, setIntervalValue] = useState<NodeJS.Timer | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [task, setTask] = useState<string>("");
+  const [autocomplete, setAutocomplete] = useState<string>("");
   const taskInputRef = useRef<HTMLInputElement>(null);
   const formattedTime = timer.toTimeString().split(" ")[0];
+
+  const getMatchingTask = useCallback(
+    (task: string) => {
+      if (tasks.length === 0) {
+        return "";
+      }
+
+      return tasks.filter((el) =>
+        el.toLowerCase().startsWith(task.trim().toLowerCase()),
+      )[0];
+    },
+    [tasks],
+  );
+
+  useEffect(() => {
+    const placeholder = task
+      ? getMatchingTask(task)?.slice(task.length) || ""
+      : "";
+
+    setAutocomplete(placeholder);
+  }, [getMatchingTask, task, tasks]);
+
+  const taskInputSetFocus = () => {
+    if (
+      document.activeElement !== taskInputRef.current &&
+      taskInputRef.current &&
+      taskInputRef.current.innerText !== ""
+    ) {
+      setCursorAtTheEnd(taskInputRef.current!);
+    }
+    taskInputRef.current?.focus();
+  };
 
   const worker = useMemo<Worker>(
     () => new Worker(new URL("../../worker.ts", import.meta.url)),
@@ -91,44 +134,62 @@ const Timer = ({ addPomodoro, tasks }: Props) => {
     }
   };
 
-  const handleKeyPress = (event: KeyboardEvent) => {
-    if (
-      taskInputRef.current === document.activeElement &&
-      event.key !== "Enter"
-    ) {
-      return;
+  function toggleTimer(event: KeyboardEvent) {
+    if (interval) {
+      stopTimer();
+    } else {
+      runTimer();
+      event.stopPropagation();
+      event.preventDefault();
     }
+  }
 
-    switch (event.key) {
-      case "r":
-      case "Enter":
-        if (interval) {
+  const handleKeyUp = (event: KeyboardEvent) => {
+    if (taskInputRef.current === document.activeElement) {
+      switch (event.key) {
+        case " ":
+          if (event.ctrlKey && !!autocomplete) {
+            setTask(task + autocomplete);
+            if (taskInputRef.current) {
+              taskInputRef.current.innerText = task + autocomplete;
+            }
+            setCursorAtTheEnd(taskInputRef.current!);
+            event.preventDefault();
+          }
+          break;
+        case "Enter":
+          toggleTimer(event);
+          break;
+        default:
+          break;
+      }
+    } else {
+      switch (event.key) {
+        case "r":
+        case "Enter":
+          toggleTimer(event);
+          break;
+        case "s":
           stopTimer();
-        } else {
-          runTimer();
-          event.stopPropagation();
-        }
-        break;
-      case "s":
-        stopTimer();
-        break;
-      case "c":
-        clearTimer();
-        break;
-      default:
-        break;
+          break;
+        case "c":
+          clearTimer();
+          break;
+        default:
+          break;
+      }
     }
   };
 
   useEffect(() => {
-    document.addEventListener("keypress", handleKeyPress);
+    document.addEventListener("keyup", handleKeyUp);
     if ("Notification" in window) {
       if (Notification.permission !== "granted") {
         Notification.requestPermission();
       }
     }
     return () => {
-      document.removeEventListener("keypress", handleKeyPress);
+      document.removeEventListener("keyup", handleKeyUp);
     };
   });
 
@@ -137,7 +198,7 @@ const Timer = ({ addPomodoro, tasks }: Props) => {
       <h1>{formattedTime}</h1>
       <h2>{isFinished ? "Finished!" : null}</h2>
 
-      <TimeoutInput timeout={timeout} setTimeout={setTimeout} autoFocus />
+      <TimeoutInput timeout={timeout} setTimeout={setTimeoutValue} autoFocus />
       <TaskInput
         ref={taskInputRef}
         task={task}
@@ -145,6 +206,8 @@ const Timer = ({ addPomodoro, tasks }: Props) => {
           setTask(e.target.value)
         }
         tasks={tasks}
+        inputSetFocus={taskInputSetFocus}
+        autocomplete={autocomplete}
         disabled={interval !== null}
       />
 

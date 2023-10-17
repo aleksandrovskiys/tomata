@@ -2,32 +2,23 @@ import { forwardRef } from "react";
 import "./TimerPageInput.css";
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  inputSetFocus?: () => void;
   tasks: string[];
   task: string;
+  autocomplete: string;
 }
 const TaskInput = forwardRef(
   (
-    { task, onChange, tasks, ...rest }: Props,
+    { task, onChange, tasks, inputSetFocus, autocomplete, ...rest }: Props,
     ref: React.ForwardedRef<HTMLInputElement>,
   ) => {
-    const getMatchingTask = (task: string) => {
-      if (tasks.length === 0) {
-        return "";
-      }
-
-      return tasks.filter((el) =>
-        el.toLowerCase().startsWith(task.trim().toLowerCase()),
-      )[0];
-    };
-
-    const placeholder = task
-      ? getMatchingTask(task)?.slice(task.length) || ""
-      : "";
-
     return (
       <label className="timer-timeout-label">
         <div className="task-input-text">to work on</div>
-        <div className="timer-page-input task-input noselect">
+        <div
+          className="timer-page-input task-input noselect"
+          onClick={inputSetFocus}
+        >
           <div
             contentEditable={true}
             suppressContentEditableWarning={true}
@@ -41,7 +32,7 @@ const TaskInput = forwardRef(
             ref={ref}
             {...rest}
           />
-          <span style={{ color: "darkgrey" }}>{placeholder}</span>
+          <span style={{ color: "darkgrey" }}>{autocomplete}</span>
         </div>
       </label>
     );
