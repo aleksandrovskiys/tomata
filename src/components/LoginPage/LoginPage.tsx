@@ -28,6 +28,10 @@ export function LoginPage() {
       });
   }
 
+  async function onGoogleLoginClicked() {
+    alert("Logged in with Google");
+  }
+
   React.useEffect(() => {
     if (!!user) {
       setIsLoggedIn(true);
@@ -49,7 +53,10 @@ export function LoginPage() {
           <p>Redirecting...</p>
         </>
       ) : (
-        <LoginForm onSubmit={onSubmit} />
+        <LoginForm
+          onSubmit={onSubmit}
+          onGoogleLoginClicked={onGoogleLoginClicked}
+        />
       )}
     </AppContainer>
   );

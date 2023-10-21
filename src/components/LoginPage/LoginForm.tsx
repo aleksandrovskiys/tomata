@@ -1,5 +1,5 @@
 import { FieldValues, useForm } from "react-hook-form";
-import Button from "../common/Button/Button";
+import Button, { ButtonProps } from "../common/Button/Button";
 import Form from "../common/Form/Form";
 import FormInputField from "../common/FormComponents/FormTextField/FormTextField";
 import { emailValidationRules } from "../common/FormComponents/rules";
@@ -11,9 +11,22 @@ export interface LoginInputs extends FieldValues {
 
 interface Props {
   onSubmit: (data: LoginInputs) => void;
+  onGoogleLoginClicked: () => void;
 }
 
-export function LoginForm({ onSubmit }: Props) {
+function ButtonContainer({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+      {children}
+    </div>
+  );
+}
+
+function LoginButton(props: ButtonProps) {
+  return <Button {...props} style={{ margin: "10px 0px" }} />;
+}
+
+export function LoginForm({ onSubmit, onGoogleLoginClicked }: Props) {
   const { handleSubmit, control } = useForm<LoginInputs>({
     defaultValues: {
       email: "",
@@ -23,7 +36,7 @@ export function LoginForm({ onSubmit }: Props) {
   });
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "320px" }}>
       <FormInputField
         autoFocus
         name="email"
@@ -41,7 +54,19 @@ export function LoginForm({ onSubmit }: Props) {
         }}
         placeholder="password"
       />
-      <Button type="submit" text="Login" onClick={handleSubmit(onSubmit)} />
+      <ButtonContainer>
+        <LoginButton
+          type="submit"
+          text="Login"
+          onClick={handleSubmit(onSubmit)}
+          style={{ margin: "0" }}
+        />
+        <LoginButton
+          type="button"
+          text="Login with Google"
+          onClick={onGoogleLoginClicked}
+        />
+      </ButtonContainer>
     </Form>
   );
 }
