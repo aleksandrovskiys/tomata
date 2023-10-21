@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
-import Button from "../common/Button/Button";
+import { AuthenticationButtonContainer } from "../common/AuthenticationButtonContainer/AuthenticationButtonContainer";
+import AuthFormButton from "../common/AuthFormButton/AuthFormButton";
 import Form from "../common/Form/Form";
 import FormInputField from "../common/FormComponents/FormTextField/FormTextField";
 import { emailValidationRules } from "../common/FormComponents/rules";
@@ -7,9 +8,10 @@ import { RegisterInputs } from "./RegisterPage";
 
 interface Props {
   onSubmit: (data: RegisterInputs) => void;
+  onSignUpWithGoogleClicked: () => void;
 }
 
-const RegistrationForm = ({ onSubmit }: Props) => {
+const RegistrationForm = ({ onSubmit, onSignUpWithGoogleClicked }: Props) => {
   const { handleSubmit, control, getValues } = useForm<RegisterInputs>({
     defaultValues: {
       email: "",
@@ -21,7 +23,11 @@ const RegistrationForm = ({ onSubmit }: Props) => {
 
   return (
     <>
-      <Form onSubmit={handleSubmit((data) => onSubmit(data))} noValidate>
+      <Form
+        onSubmit={handleSubmit((data) => onSubmit(data))}
+        noValidate
+        style={{ maxWidth: "320px" }}
+      >
         <FormInputField
           autoFocus
           name="email"
@@ -59,7 +65,18 @@ const RegistrationForm = ({ onSubmit }: Props) => {
             },
           }}
         />
-        <Button onClick={handleSubmit(onSubmit)} text="Register" />
+        <AuthenticationButtonContainer>
+          <AuthFormButton
+            onClick={handleSubmit(onSubmit)}
+            text="Register"
+            type="submit"
+          />
+          <AuthFormButton
+            onClick={onSignUpWithGoogleClicked}
+            text="Sign Up With Google"
+            type="button"
+          />
+        </AuthenticationButtonContainer>
       </Form>
     </>
   );

@@ -16,3 +16,7 @@ export interface User {
   id: string;
   email: string;
 }
+
+export interface AntiForgeryTokenResponse {
+  state: string;
+}

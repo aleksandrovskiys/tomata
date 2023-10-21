@@ -3,7 +3,11 @@ import React, { useEffect } from "react";
 import AppContainer from "../common/AppContainer/AppContainer";
 import { FieldValues } from "react-hook-form";
 import "./RegisterPage.css";
-import { register } from "../../api/api";
+import {
+  getAntiForgeryToken,
+  openGoogleAuthWindow,
+  register,
+} from "../../api/api";
 import RegistrationErrorBlock from "./RegistrationErrorBlock";
 import RegistrationForm from "./RegistrationForm";
 import RegistrationSuccessful from "./RegistrationSuccessful";
@@ -41,6 +45,12 @@ const RegisterPage = () => {
         setRegistrationSuccessful(false);
       });
   }
+  async function onSignupWithGoogleClicked() {
+    const response = await getAntiForgeryToken();
+    const state = response.state;
+
+    openGoogleAuthWindow(state, "/openid/signup-callback");
+  }
 
   useEffect(() => {
     if (user) {
@@ -64,7 +74,10 @@ const RegisterPage = () => {
           }}
         />
       ) : (
-        <RegistrationForm onSubmit={onSubmit} />
+        <RegistrationForm
+          onSubmit={onSubmit}
+          onSignUpWithGoogleClicked={onSignupWithGoogleClicked}
+        />
       )}
     </AppContainer>
   );
