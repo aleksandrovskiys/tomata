@@ -1,7 +1,10 @@
 import { LoginInputs } from "../components/LoginPage/LoginForm";
-import { Pomodoro, User } from "../interafaces";
+import { AntiForgeryTokenResponse, Pomodoro, User } from "../interafaces";
 
 const API_URL = process.env.REACT_APP_API_URL;
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID as string;
+const GOOGLE_AUTH_URL = process.env.REACT_APP_GOOGLE_AUTH_URL as string;
+const DOMAIN = process.env.REACT_APP_DOMAIN as string;
 
 interface RegisterParameters {
   email: string;
@@ -128,5 +131,64 @@ export async function addPomodoroToServer(
       console.log(err);
       return Promise.reject("Service unavailable");
     });
+  return response;
+}
+
+export async function getAntiForgeryToken(): Promise<AntiForgeryTokenResponse> {
+  const response = fetch(`${API_URL}/anti-forgery-token`, {
+    method: "GET",
+  })
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject("Unsuccessful request");
+      }
+      return res.json();
+    })
+    .then((data) => {
+      return Promise.resolve(data);
+    })
+    .catch((err) => {
+      console.log(err);
+      return Promise.reject("Service unavailable");
+    });
+
+  return response;
+}
+
+export function openGoogleAuthWindow(state: string, redirect_uri: string) {
+  const url =
+    `${GOOGLE_AUTH_URL}?` +
+    new URLSearchParams({
+      client_id: GOOGLE_CLIENT_ID,
+      redirect_uri: `${DOMAIN}${redirect_uri}`,
+      response_type: "code",
+      scope: "openid email profile",
+      state,
+    });
+  window.open(url, "_self");
+}
+
+export async function finalizeSignupWithGoogle(state: string, code: string) {
+  const response = fetch(`${API_URL}/google-signup/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ state, code }),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject("Unsuccessful request");
+      }
+      return res.json();
+    })
+    .then((data) => {
+      return Promise.resolve(data);
+    })
+    .catch((err) => {
+      console.log(err);
+      return Promise.reject("Service unavailable");
+    });
+
   return response;
 }

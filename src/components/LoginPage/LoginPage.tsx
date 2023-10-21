@@ -1,4 +1,8 @@
-import { login } from "../../api/api";
+import {
+  getAntiForgeryToken,
+  login,
+  openGoogleAuthWindow,
+} from "../../api/api";
 import AppContainer from "../common/AppContainer/AppContainer";
 import { LoginForm, LoginInputs } from "./LoginForm";
 import React from "react";
@@ -29,7 +33,10 @@ export function LoginPage() {
   }
 
   async function onGoogleLoginClicked() {
-    alert("Logged in with Google");
+    const response = await getAntiForgeryToken();
+    const state = response.state;
+
+    openGoogleAuthWindow(state, "/openid/callback");
   }
 
   React.useEffect(() => {
