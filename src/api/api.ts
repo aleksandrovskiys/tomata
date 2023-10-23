@@ -169,7 +169,7 @@ export function openGoogleAuthWindow(state: string, redirect_uri: string) {
 }
 
 export async function finalizeSignupWithGoogle(state: string, code: string) {
-  const response = fetch(`${API_URL}/google-signup/register`, {
+  const response = fetch(`${API_URL}/google-auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -187,6 +187,35 @@ export async function finalizeSignupWithGoogle(state: string, code: string) {
     })
     .catch((err) => {
       console.log(err);
+      return Promise.reject("Service unavailable");
+    });
+
+  return response;
+}
+export async function loginWithGoogle(
+  state: string,
+  code: string,
+): Promise<LoginResponse> {
+  const response = fetch(`${API_URL}/google-auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      state,
+      code,
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject("Unsuccessful request");
+      }
+      return res.json();
+    })
+    .then((data: LoginResponse) => {
+      return Promise.resolve(data);
+    })
+    .catch(() => {
       return Promise.reject("Service unavailable");
     });
 
