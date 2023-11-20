@@ -213,11 +213,12 @@ const Timer = ({ addPomodoro, tasks }: Props) => {
 
       <div className="control-panel">
         {interval === null ? (
-          <Button onClick={runTimer} text="Run" />
+          <Button id="button-run" onClick={runTimer} text="Run" />
         ) : (
-          <Button onClick={stopTimer} text="Stop" />
+          <Button id="button-stop" onClick={stopTimer} text="Stop" />
         )}
         <Button
+          id="button-clear"
           onClick={() => {
             clearTimer();
             setIsFinished(false);
